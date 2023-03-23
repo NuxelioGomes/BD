@@ -1,0 +1,101 @@
+CREATE TABLE pessoas (
+	id_pessoa INTEGER,
+	nome	 TEXT,
+	email	 TEXT,
+	password	 TEXT,
+	telefone	 TEXT,
+	PRIMARY KEY(id_pessoa)
+);
+
+CREATE TABLE clientes (
+	id_cliente	 INTEGER,
+	tipo_cliente	 TEXT,
+	pessoas_id_pessoa INTEGER,
+	PRIMARY KEY(pessoas_id_pessoa)
+);
+
+CREATE TABLE administrador (
+	id_admin		 BIGINT,
+	pessoas_id_pessoa INTEGER,
+	PRIMARY KEY(pessoas_id_pessoa)
+);
+
+CREATE TABLE viagens (
+	id_viagem		 INTEGER,
+	num_autocarro		 INTEGER,
+	preco			 INTEGER,
+	data			 DATE,
+	duracao		 INTEGER,
+	distancia		 INTEGER,
+	origem			 TEXT,
+	destino		 TEXT,
+	autocarros_id_autocarro INTEGER NOT NULL,
+	PRIMARY KEY(id_viagem)
+);
+
+CREATE TABLE autocarros (
+	id_autocarro INTEGER,
+	num_viagem	 INTEGER,
+	lugares	 INTEGER DEFAULT 25,
+	PRIMARY KEY(id_autocarro)
+);
+
+CREATE TABLE registros (
+	num_cliente		 INTEGER,
+	num_viagem		 INTEGER,
+	num_autocarro		 INTEGER,
+	lugar			 INTEGER,
+	estado			 TEXT,
+	data			 DATE,
+	viagens_id_viagem		 INTEGER NOT NULL,
+	clientes_pessoas_id_pessoa INTEGER NOT NULL
+);
+
+CREATE TABLE mensagens (
+	num_admin			 INTEGER,
+	num_cliente			 INTEGER,
+	lida				 BOOL,
+	conteudo			 TEXT,
+	clientes_pessoas_id_pessoa	 INTEGER NOT NULL,
+	administrador_pessoas_id_pessoa INTEGER NOT NULL
+);
+
+CREATE TABLE admin_viagem (
+	num_admin			 INTEGER,
+	num_viagem			 INTEGER,
+	alteracao			 TEXT,
+	viagens_id_viagem		 INTEGER NOT NULL,
+	administrador_pessoas_id_pessoa INTEGER NOT NULL
+);
+
+CREATE TABLE admin_autocarro (
+	num_admin			 INTEGER,
+	num_autocarro			 INTEGER,
+	alteracao			 TEXT,
+	autocarros_id_autocarro	 INTEGER NOT NULL,
+	administrador_pessoas_id_pessoa INTEGER NOT NULL
+);
+
+CREATE TABLE estatisticas_ (
+	id_stat		 INTEGER,
+	viagem_mais_vendida	 INTEGER,
+	melhor_cliente		 INTEGER,
+	viagem_sem_reserva	 INTEGER,
+	reservas_viagem	 INTEGER,
+	reservas_canceladas	 INTEGER,
+	reservasclientes_espera INTEGER,
+	PRIMARY KEY(id_stat)
+);
+
+ALTER TABLE clientes ADD CONSTRAINT clientes_fk1 FOREIGN KEY (pessoas_id_pessoa) REFERENCES pessoas(id_pessoa);
+ALTER TABLE administrador ADD CONSTRAINT administrador_fk1 FOREIGN KEY (pessoas_id_pessoa) REFERENCES pessoas(id_pessoa);
+ALTER TABLE viagens ADD CONSTRAINT viagens_fk1 FOREIGN KEY (autocarros_id_autocarro) REFERENCES autocarros(id_autocarro);
+ALTER TABLE registros ADD CONSTRAINT registros_fk1 FOREIGN KEY (viagens_id_viagem) REFERENCES viagens(id_viagem);
+ALTER TABLE registros ADD CONSTRAINT registros_fk2 FOREIGN KEY (clientes_pessoas_id_pessoa) REFERENCES clientes(pessoas_id_pessoa);
+ALTER TABLE mensagens ADD CONSTRAINT mensagens_fk1 FOREIGN KEY (clientes_pessoas_id_pessoa) REFERENCES clientes(pessoas_id_pessoa);
+ALTER TABLE mensagens ADD CONSTRAINT mensagens_fk2 FOREIGN KEY (administrador_pessoas_id_pessoa) REFERENCES administrador(pessoas_id_pessoa);
+ALTER TABLE admin_viagem ADD CONSTRAINT admin_viagem_fk1 FOREIGN KEY (viagens_id_viagem) REFERENCES viagens(id_viagem);
+ALTER TABLE admin_viagem ADD CONSTRAINT admin_viagem_fk2 FOREIGN KEY (administrador_pessoas_id_pessoa) REFERENCES administrador(pessoas_id_pessoa);
+ALTER TABLE admin_autocarro ADD CONSTRAINT admin_autocarro_fk1 FOREIGN KEY (autocarros_id_autocarro) REFERENCES autocarros(id_autocarro);
+ALTER TABLE admin_autocarro ADD CONSTRAINT admin_autocarro_fk2 FOREIGN KEY (administrador_pessoas_id_pessoa) REFERENCES administrador(pessoas_id_pessoa);
+
